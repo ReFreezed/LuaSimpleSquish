@@ -6,10 +6,10 @@ local file = assert(io.open"simpleSquish.lua")
 local lua  = file:read"*a"
 file:close()
 
-local simpleSquish = require"simpleSquish"
-local squishedLua  = assert(simpleSquish.minify(lua))
+local squish      = require"simpleSquish"
+local minifiedLua = assert(squish.minify(lua))
 
 print("================================")
 print("Squished output:")
-print(squishedLua)
+print(minifiedLua)
 print("================================")

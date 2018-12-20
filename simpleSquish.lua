@@ -12,7 +12,7 @@
 
 local VERSION = "0.1.0"
 
-local simpleSquish
+local squish
 
 
 
@@ -24,6 +24,7 @@ local assertarg
 local copyTable
 local indexOf
 local newSquishEnvironment
+local readFile, writeFile
 
 local doSquish
 local minify, minifyAndUglify
@@ -344,6 +345,30 @@ end
 
 
 
+-- contents, error = readFile( path [, isTextFile=false ] )
+function readFile(path, isTextFile)
+	local file, err = io.open(path, (isTextFile and "r" or "rb"))
+	if not file then  return nil, err  end
+
+	local contents = file:read"*a"
+	file:close()
+
+	return contents
+end
+
+-- success, error = writeFile( path, contents [, isTextFile=false ] )
+function writeFile(path, contents, isTextFile)
+	local file, err = io.open(path, (isTextFile and "w" or "wb"))
+	if not file then  return nil, err  end
+
+	file:write(contents)
+	file:close()
+
+	return true
+end
+
+
+
 --==============================================================
 
 
@@ -354,13 +379,17 @@ local function doSquish(lua, squishArgs)
 	assertarg(1, lua,        "string")
 	assertarg(2, squishArgs, "table","nil")
 
-	-- @Incomplete: Strip --output|-o from squishArgs as they are useless in the virtual file system.
-	squishArgs = squishArgs or {}
+	squishArgs = squishArgs and copyTable(squishArgs) or {}
+	-- table.insert(squishArgs, "--very-verbose") -- DEBUG
 
-	--[[ DEBUG
-	squishArgs = copyTable(squishArgs)
-	table.insert(squishArgs, "--very-verbose")
-	--]]
+	-- Remove --output/-o as they are useless in the virtual file system.
+	for i = #squishArgs, 1, -1 do
+		local option = (squishArgs[i]:match"^%-%-?([^=]+)" or ""):lower()
+
+		if option == "output" or option == "o" then
+			table.remove(squishArgs, i)
+		end
+	end
 
 	local basePath = "." -- Concept used in Squish.
 
@@ -373,7 +402,14 @@ local function doSquish(lua, squishArgs)
 	setVirtualFileContents(basePath.."/lua", lua)
 	setVirtualFileContents(basePath.."/squishy", squishy)
 
-	local chunk, err = loadfile(simpleSquish.squishPath)
+	local path = squish.squishPath
+	if path == "" then
+		local source         = debug.getinfo(1, "S").source
+		local pathToThisFile = source and source:match"@?(.+)" or "?"
+		path                 = pathToThisFile:gsub("[^/]+$", "squish.lua")
+	end
+
+	local chunk, err = loadfile(path)
 	if not chunk then  return nil, err  end
 
 	local ok, errOrExitCode = runInEnvironment(chunk, basePath, unpack(squishArgs))
@@ -434,16 +470,19 @@ end
 --==============================================================
 --==============================================================
 
-simpleSquish = {
+squish = {
 	VERSION         = VERSION,
-	squishPath      = "./squish.lua",
+	squishPath      = "", -- An empty string means we'll try to guess where Squish is using the debug library.
+
+	read            = readFile,
+	write           = writeFile,
 
 	minify          = minify,
 	minifyAndUglify = minifyAndUglify,
 	squish          = doSquish,
 }
 
-return simpleSquish
+return squish
 
 
 

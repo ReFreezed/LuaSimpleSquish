@@ -1,10 +1,10 @@
 # SimpleSquish
-*SimpleSquish* is a simple Lua library that wraps around [Squish](https://github.com/LuaDist/squish/).
+**SimpleSquish** is a simple library for Lua 5.1 that wraps around [Squish](https://github.com/LuaDist/squish/).
 It exposes the functionality of Squish without requiring a file system.
-Internally, *SimpleSquish* creates a virtual file system which enables us to feed Squish all necessary
+Internally, SimpleSquish creates a virtual file system which enables us to feed Squish all necessary
 data as Lua strings instead of having to deal with creating `squish` files for it, etc.
 
-*SimpleSquish* is perfect if you, for example, just want to minify or obfuscate some Lua code as part of your program.
+SimpleSquish is perfect if you, for example, just want to minify or obfuscate some Lua code as part of your program.
 
 - [Usage](#usage)
 - [API](#api)
@@ -12,32 +12,32 @@ data as Lua strings instead of having to deal with creating `squish` files for i
 
 
 ## Usage
-The files you need from this repository are [`simpleSquish.lua`](simpleSquish.lua) and [`squish.lua`](squish.lua).
+The files you need from this repository are [simpleSquish.lua](simpleSquish.lua) and [squish.lua](squish.lua).
 
 ```lua
-local simpleSquish = require("simpleSquish")
+local squish = require("simpleSquish")
 
 local lua = [[
-	local x = 5
+	local x = 5 -- Hello.
 	local function foo()
-		print("Hello")
+		print("World")
 	end
 ]]
 
-local squishedLua = simpleSquish.minify(lua)
-print(squishedLua)
+local minifiedLua = squish.minify(lua)
+print(minifiedLua)
 
 -- Output will be something like:
--- local a=5 local function b()print("Hello")end
+-- local a=5 local function b()print("World")end
 ```
 
-See [`runTest.lua`](runTest.lua) for more example code.
+See [runTest.lua](runTest.lua) for more example code.
 
 
 ## API
 
 #### minify
-`squishedLua = simpleSquish.minify( lua [, minifyLevel="full", extraSquishArguments ] )`
+`squishedLua = squish.minify( lua [, minifyLevel="full", extraSquishArguments ] )`
 
 Apply *minify* on some Lua code.
 `minifyLevel` can be "none", "debug", "default", "basic" or "full".
@@ -45,11 +45,11 @@ Shorthand for:
 
 ```lua
 local args = {"--minify-level=full"}
-local squishedLua = simpleSquish.squish(lua, args)
+local squishedLua = squish.squish(lua, args)
 ```
 
 #### minifyAndUglify
-`squishedLua = simpleSquish.minifyAndUglify( lua [, minifyLevel="full", extraSquishArguments ] )`
+`squishedLua = squish.minifyAndUglify( lua [, minifyLevel="full", extraSquishArguments ] )`
 
 Apply *minify* and *uglify* on some Lua code.
 `minifyLevel` can be "none", "debug", "default", "basic" or "full".
@@ -57,24 +57,34 @@ Shorthand for:
 
 ```lua
 local args = {"--minify-level=full", "--uglify"}
-local squishedLua = simpleSquish.squish(lua, args)
+local squishedLua = squish.squish(lua, args)
 ```
 
+#### read
+`contents, error = squish.read( path [, isTextFile=false ] )`
+
+Read the entire contents of a file. Returns nil and a message on error.
+
 #### squish
-`squishedLua = simpleSquish.squish( lua [, squishArguments ] )`
+`squishedLua = squish.squish( lua [, squishArguments ] )`
 
 Squish some Lua code.
 
 #### squishPath
-`simpleSquish.squishPath = "./squish.lua"`
+`squish.squishPath = ""`
 
-The path to `squish.lua`.
-You may have to update this if the current working directory isn't the library's folder.
+The path to [squish.lua](squish.lua).
+An empty string means SimpleSquish will try to load it from the same folder as SimpleSquish is in.
 
 #### VERSION
-`simpleSquish.VERSION`
+`squish.VERSION`
 
-The current version of *SimpleSquish*, e.g. `"1.3.0"`.
+The current version of SimpleSquish, e.g. `"1.3.0"`.
+
+#### write
+`success, error = squish.write( path, contents [, isTextFile=false ] )`
+
+Write to a file. Returns false and a message on error.
 
 
 ### Squish Arguments
