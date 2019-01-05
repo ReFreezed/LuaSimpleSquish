@@ -177,7 +177,10 @@ function newSquishEnvironment()
 	function env.io.open(path, mode)
 		mode = mode or "r"
 
-		local modeMode, modeBinary, modeUpdate = mode:match"^([rwa])(b?)(%+?)$"
+		local modeMode, modeUpdate, modeBinary = mode:match"^([rwa])(%+?)(b?)$"
+		if not modeMode then
+			modeMode, modeUpdate, modeBinary = mode:match"^([rwa])(b?)(%+?)$"
+		end
 		if not modeMode then
 			return nil, "Invalid mode '"..mode.."'."
 		end

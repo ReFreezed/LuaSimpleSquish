@@ -2,7 +2,7 @@
 **SimpleSquish** is a simple library for Lua 5.1 that wraps around [Squish](https://github.com/LuaDist/squish/).
 It exposes the functionality of Squish without requiring a file system.
 Internally, SimpleSquish creates a virtual file system which enables us to feed Squish all necessary
-data as Lua strings instead of having to deal with creating `squish` files for it, etc.
+data as Lua strings instead of having to deal with creating `squishy` files for it, etc.
 
 SimpleSquish is perfect if you, for example, just want to minify or obfuscate some Lua code as part of your program.
 
