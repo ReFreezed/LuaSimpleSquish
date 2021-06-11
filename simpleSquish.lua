@@ -8,9 +8,11 @@
 --=
 --=  Tested for Lua 5.1.
 --=
+--=  See simpleSquishCl.lua for usage from the command line.
+--=
 --============================================================]]
 
-local VERSION = "0.1.0"
+local SIMPLE_SQUISH_VERSION = "1.0.0"
 
 local squish
 
@@ -25,9 +27,6 @@ local copyTable
 local indexOf
 local newSquishEnvironment
 local readFile, writeFile
-
-local doSquish
-local minify, minifyAndUglify
 
 
 
@@ -348,9 +347,9 @@ end
 
 
 
--- contents, error = readFile( path [, isTextFile=false ] )
-function readFile(path, isTextFile)
-	local file, err = io.open(path, (isTextFile and "r" or "rb"))
+-- contents, error = readFile( path [, isBinaryFile=false ] )
+function readFile(path, isBinaryFile)
+	local file, err = io.open(path, (isBinaryFile and "rb" or "r"))
 	if not file then  return nil, err  end
 
 	local contents = file:read"*a"
@@ -359,9 +358,9 @@ function readFile(path, isTextFile)
 	return contents
 end
 
--- success, error = writeFile( path, contents [, isTextFile=false ] )
-function writeFile(path, contents, isTextFile)
-	local file, err = io.open(path, (isTextFile and "w" or "wb"))
+-- success, error = writeFile( path, contents [, isBinaryFile=false ] )
+function writeFile(path, contents, isBinaryFile)
+	local file, err = io.open(path, (isBinaryFile and "wb" or "w"))
 	if not file then  return nil, err  end
 
 	file:write(contents)
@@ -437,7 +436,7 @@ end
 
 
 -- squishedLua = minify( lua [, minifyLevel="full", extraSquishArguments ] )
-function minify(lua, minifyLevel, squishArgs)
+local function minify(lua, minifyLevel, squishArgs)
 	assertarg(1, lua,         "string")
 	assertarg(2, minifyLevel, "string","nil")
 	assertarg(3, squishArgs,  "table","nil")
@@ -451,7 +450,7 @@ function minify(lua, minifyLevel, squishArgs)
 end
 
 -- squishedLua = minifyAndUglify( lua [, minifyLevel="full", extraSquishArguments ] )
-function minifyAndUglify(lua, minifyLevel, squishArgs)
+local function minifyAndUglify(lua, minifyLevel, squishArgs)
 	assertarg(1, lua,         "string")
 	assertarg(2, minifyLevel, "string","nil")
 	assertarg(3, squishArgs,  "table","nil")
@@ -474,7 +473,7 @@ end
 --==============================================================
 
 squish = {
-	VERSION         = VERSION,
+	VERSION         = SIMPLE_SQUISH_VERSION,
 	squishPath      = "", -- An empty string means we'll try to guess where Squish is using the debug library.
 
 	read            = readFile,
@@ -491,7 +490,7 @@ return squish
 
 --[[!===========================================================
 
-Copyright © 2018 Marcus 'ReFreezed' Thunström
+Copyright © 2018-2021 Marcus 'ReFreezed' Thunström
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

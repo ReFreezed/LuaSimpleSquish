@@ -8,11 +8,14 @@ SimpleSquish is perfect if you, for example, just want to minify or obfuscate so
 
 - [Usage](#usage)
 - [API](#api)
-	- [Squish arguments](#squish-arguments)
+- [Squish arguments](#squish-arguments)
+- [Command Line](#command-line)
+
 
 
 ## Usage
 The files you need from this repository are [simpleSquish.lua](simpleSquish.lua) and [squish.lua](squish.lua).
+To use the library from the [command line](#command-line) you also need [simpleSquishCl.lua](simpleSquishCl.lua).
 
 ```lua
 local squish = require("simpleSquish")
@@ -34,64 +37,85 @@ print(minifiedLua)
 See [runTest.lua](runTest.lua) for more example code.
 
 
+
 ## API
 
-#### minify
+
+### minify
+
 `squishedLua = squish.minify( lua [, minifyLevel="full", extraSquishArguments ] )`
 
 Apply *minify* on some Lua code.
-`minifyLevel` can be "none", "debug", "default", "basic" or "full".
+`minifyLevel` can be `"none"`, `"debug"`, `"default"`, `"basic"` or `"full"`.
 Shorthand for:
 
 ```lua
-local args = {"--minify-level=full"}
+local args        = {"--minify-level=full"}
 local squishedLua = squish.squish(lua, args)
 ```
 
-#### minifyAndUglify
+
+### minifyAndUglify
+
 `squishedLua = squish.minifyAndUglify( lua [, minifyLevel="full", extraSquishArguments ] )`
 
 Apply *minify* and *uglify* on some Lua code.
-`minifyLevel` can be "none", "debug", "default", "basic" or "full".
+`minifyLevel` can be `"none"`, `"debug"`, `"default"`, `"basic"` or `"full"`.
 Shorthand for:
 
 ```lua
-local args = {"--minify-level=full", "--uglify"}
+local args        = {"--minify-level=full", "--uglify"}
 local squishedLua = squish.squish(lua, args)
 ```
 
-#### read
-`contents, error = squish.read( path [, isTextFile=false ] )`
 
-Read the entire contents of a file. Returns nil and a message on error.
+### read
 
-#### squish
+`contents, error = squish.read( path [, isBinaryFile=false ] )`
+
+Read the entire contents of a file.
+Returns **nil** and a message on error.
+
+
+### squish
+
 `squishedLua = squish.squish( lua [, squishArguments ] )`
 
-Squish some Lua code.
+Squish some Lua code, optionally with extra [arguments for Squish](#squish-arguments).
 
-#### squishPath
+
+### squishPath
+
 `squish.squishPath = ""`
 
 The path to [squish.lua](squish.lua).
 An empty string means SimpleSquish will try to load it from the same folder as SimpleSquish is in.
 
-#### VERSION
+
+### VERSION
+
 `squish.VERSION`
 
 The current version of SimpleSquish, e.g. `"1.3.0"`.
 
-#### write
-`success, error = squish.write( path, contents [, isTextFile=false ] )`
 
-Write to a file. Returns false and a message on error.
+### write
+
+`success, error = squish.write( path, contents [, isBinaryFile=false ] )`
+
+Write to a file.
+Returns **false** and a message on error.
 
 
-### Squish Arguments
+
+## Squish Arguments
+
 Arguments can be prefixed with `no-` to negate their meaning, e.g. `--no-minify-comments`.
 Some arguments may not work in certain situations.
 
-#### Minify
+
+### Minify
+
 - `--minify`
 - `--minify-level=none|debug|default|basic|full`
 - `--minify-comments`
@@ -103,17 +127,23 @@ Some arguments may not work in certain situations.
 - `--minify-strings`
 - `--minify-whitespace`
 
-#### Uglify
+
+### Uglify
+
 - `--uglify`
 - `--uglify-level=full`
 
-#### Logging
+
+### Logging
+
 - `--verbose` or `-v`
 - `--very-verbose` or `-vv`
 - `--quiet` or `-q`
 - `--very-quiet` or `-qq`
 
-#### Other
+
+### Other
+
 - `--compile`
 - `--compile-strip`
 - `--debug`
@@ -121,5 +151,18 @@ Some arguments may not work in certain situations.
 - `--executable=path`
 - `--use-http`
 
-See Squish documentation/code for more info about it's arguments.
+See Squish documentation/code for more information about it's arguments.
+
+
+
+## Command Line
+
+The library can be used from the command line through [simpleSquishCl.lua](simpleSquishCl.lua):
+
+`lua simpleSquishCl.lua <inputFile> <outputFile> <squishArguments>`
+
+Example:
+
+`lua path/to/simpleSquishCl.lua src/myApp.lua output/myApp.lua --minify`
+
 
