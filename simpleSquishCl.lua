@@ -25,6 +25,7 @@ end
 local hereSource = debug.getinfo(1, "S").source
 local herePath   = hereSource and hereSource:match"@?(.+)"
 assertLine(herePath, "Cannot get current directory.")
+herePath = herePath:gsub("\\", "/")
 
 local pathToSimpleSquish = herePath:gsub("[^/]+$", "simpleSquish.lua")
 

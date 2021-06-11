@@ -407,7 +407,7 @@ local function doSquish(lua, squishArgs)
 	local path = squish.squishPath
 	if path == "" then
 		local source         = debug.getinfo(1, "S").source
-		local pathToThisFile = source and source:match"@?(.+)" or "?"
+		local pathToThisFile = (source and source:match"@?(.+)" or "?"):gsub("\\", "/")
 		path                 = pathToThisFile:gsub("[^/]+$", "squish.lua")
 	end
 
